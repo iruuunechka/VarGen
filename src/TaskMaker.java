@@ -6,8 +6,6 @@ import java.nio.file.StandardOpenOption;
 import java.util.*;
 
 /**
- * User: Arina Buzdalova
- * Date: 22.10.13
  */
 public class TaskMaker {
     public TaskMaker(String studentsFile, String tasksFile, String taskDir) throws IOException {
@@ -63,7 +61,7 @@ public class TaskMaker {
 
     private void createVariant(Student st, Path outfile) throws IOException {
         //BufferedWriter writer = Files.newBufferedWriter(outfile, Charset.defaultCharset(), StandardOpenOption.APPEND);
-        Files.write(outfile, (st.toString()+'\n').getBytes(), StandardOpenOption.APPEND);
+        Files.write(outfile, ("\\center{\\textbf{" + st + "}}" + '\n').getBytes(), StandardOpenOption.APPEND);
         Files.write(outfile, "\\begin{enumerate}\n".getBytes(), StandardOpenOption.APPEND);
         for (String t : st.getTask()) {
             Files.write(outfile, new String(taskMap.get(t)).getBytes(), StandardOpenOption.APPEND);
@@ -74,7 +72,8 @@ public class TaskMaker {
 
     public void createAllVariants(String outfile) throws IOException {
         Path test = new File(outfile).toPath();
-        Files.write(test, taskMap.get("begin"), StandardOpenOption.CREATE);
+        Files.write(test, taskMap.get("begin"), StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE);
+        Files.write(test, "\n".getBytes(), StandardOpenOption.APPEND);
         for (Student st : studentTable) {
             createVariant(st, test);
         }

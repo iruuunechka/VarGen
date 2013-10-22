@@ -1,8 +1,6 @@
 import java.util.List;
 
 /**
- * User: Arina Buzdalova
- * Date: 22.10.13
  */
 public class Student {
     private final String name;
