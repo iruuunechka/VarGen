@@ -1,5 +1,8 @@
 import java.io.*;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.*;
 
 /**
@@ -13,9 +16,9 @@ public class TaskMaker {
         taskMap = readTasks(taskDir);
     }
 
-    private Map<String, byte[]> taskMap;
-    private List<List<String>> taskNames;
-    private List<Student> studentTable;
+    private final Map<String, byte[]> taskMap;
+    private final List<List<String>> taskNames;
+    private final List<Student> studentTable;
 
     private List<List<String>> getTaskNames(String tasksFile) throws IOException {
         List<List<String>> tasks = new ArrayList<>();
@@ -37,13 +40,14 @@ public class TaskMaker {
         getTaskNames(tasksFile);
         BufferedReader st = new BufferedReader(new FileReader(new File(studentsFile)));
         Random rand= new Random();
+        String group = st.readLine();
         String s;
         while (!((s = st.readLine()) == null)) {
-            String res = "";
+            List<String> task = new ArrayList<>();
             for (List<String> taskName : taskNames) {
-                res += taskName.get(rand.nextInt(taskName.size())) + " ";
+                task.add(taskName.get(rand.nextInt(taskName.size())));
             }
-            table.add(new Student(s, res));
+            table.add(new Student(s, group, task));
         }
         return table;
     }
@@ -57,6 +61,25 @@ public class TaskMaker {
         return tasks;
     }
 
+    private void createVariant(Student st, Path outfile) throws IOException {
+        //BufferedWriter writer = Files.newBufferedWriter(outfile, Charset.defaultCharset(), StandardOpenOption.APPEND);
+        Files.write(outfile, (st.toString()+'\n').getBytes(), StandardOpenOption.APPEND);
+        Files.write(outfile, "\\begin{enumerate}\n".getBytes(), StandardOpenOption.APPEND);
+        for (String t : st.getTask()) {
+            Files.write(outfile, new String(taskMap.get(t)).getBytes(), StandardOpenOption.APPEND);
+        }
+        Files.write(outfile, "\\end{enumerate}\n".getBytes(), StandardOpenOption.APPEND);
+        Files.write(outfile, "\\newpage\n".getBytes(), StandardOpenOption.APPEND);
+    }
+
+    public void createAllVariants(String outfile) throws IOException {
+        Path test = new File(outfile).toPath();
+        Files.write(test, taskMap.get("begin"), StandardOpenOption.CREATE);
+        for (Student st : studentTable) {
+            createVariant(st, test);
+        }
+        Files.write(test, "\\end{document}\n".getBytes(), StandardOpenOption.APPEND);
+    }
     public void print(String outFile) throws FileNotFoundException {
         PrintWriter pw = new PrintWriter(new File(outFile));
         for (Student aTable : studentTable) {

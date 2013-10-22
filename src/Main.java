@@ -12,7 +12,8 @@ public class Main {
         String taskDir = args[3];
         try {
             TaskMaker tm = new TaskMaker(studentsFile, tasksFile, taskDir);
-            tm.print(outFile);
+            //tm.print(outFile);
+            tm.createAllVariants(outFile);
         } catch (IOException e) {
             e.printStackTrace();
         }
