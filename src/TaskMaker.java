@@ -8,7 +8,6 @@ import java.util.*;
  */
 public class TaskMaker {
     public TaskMaker(String studentsFile, String tasksFile, String taskDir) throws IOException {
-        rand = new Random();
         taskNames = getTaskNames(tasksFile);
         studentTable = createTable(studentsFile, tasksFile);
         taskMap = readTasks(taskDir);
@@ -17,7 +16,7 @@ public class TaskMaker {
     private final Map<String, byte[]> taskMap;
     private final List<List<String>> taskNames;
     private final List<Student> studentTable;
-    private final Random rand;
+    private static final Random rand = new Random();
 
     private List<List<String>> getTaskNames(String tasksFile) throws IOException {
         List<List<String>> tasks = new ArrayList<>();
